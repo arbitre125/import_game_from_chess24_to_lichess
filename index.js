@@ -11,7 +11,10 @@ app.post("/import", (req, res) => {
   if (req.body.pgn) {
     const importButtonSelector = ".submit.button.text";
     (async () => {
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({
+        args: ["--no-sandbox", "--disable-setuid-sandbox"]
+      });
+
       const page = await browser.newPage();
       await page.goto("https://lichess.org/paste");
       await page.type("#form3-pgn", req.body.pgn);
