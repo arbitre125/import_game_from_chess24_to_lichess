@@ -4,8 +4,6 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
 
-const port = 3000;
-
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -22,11 +20,20 @@ app.post("/import", (req, res) => {
         page.waitForNavigation({ waitUntil: "networkidle0" })
       ]);
       await browser.close();
-      res.send({ link: page.url() });
+      if (page.url() === "https://lichess.org/import") {
+        res.send({ error: "Could not upload png to lichess" });
+      } else {
+        res.send({ link: page.url() });
+      }
     })();
   }
 });
 
+app.get("/", (req, res) => {
+  res.send("Upload from pgn to lichess");
+});
+
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
